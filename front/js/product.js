@@ -1,24 +1,85 @@
-fetch("http://localhost:3000/api/products")
+//Selection des différents ids:
+let imageItems = document.getElementsByClassName("item__img"); 
+let titreH1 = document.getElementById("title");
+let prixProduit = document.getElementById("price");
+let descriptionProduit = document.getElementById("description");
+let couleurProduit = document.getElementById("colors");
+let inputQuantity = document.getElementById("quantity");
+
+//Utilisation de .get() : methode de URLSearchParams:
+let parametre = new URLSearchParams(document.location.search);
+let id = parametre.get("id");
+//console.log(id);
+
+//Recuperation des données sur l'API:
+fetch(`http://localhost:3000/api/products/${id}`)
 .then(async (response) => {//console.log(response);
     try{
         let data = await response.json();
         console.log(data);
-        data.forEach(objets => {
-            console.log(objets);
-            //Selection de la div class "item__img":
-            let imageItems = document.getElementsByClassName("item__img");
+        //Creation d'une balise "img" + attributs:
+        let baliseImage = document.createElement("img");
+        baliseImage.setAttribute("src", data.imageUrl);
+        baliseImage.setAttribute("alt", data.altText);
 
-            //Creation d'une balise "img" + attributs:
-            let baliseImage = document.createElement("img");
-            baliseImage.setAttribute("src", "");
-            baliseImage.setAttribute("alt", "");
+        //Ajout de la balise "img" à la "div" "class item__img":
+        imageItems[0].appendChild(baliseImage);
 
-            //Ajout de la balise "img" à la "div" "class item__img":
-            imageItems[0].appendChild(baliseImage);
+        //titre H1:
+        titreH1.innerHTML = data.name;
 
-            //Controles:
-            // console.log(imageItems);
-            // console.log(baliseImage);         
+        //prix:
+        prixProduit.innerHTML = data.price;
+
+        //description:
+        descriptionProduit.innerHTML = data.description;
+
+        //Couleur:
+        data.colors.forEach(couleurs => {
+            //Création d'une balise HTML "option":
+            let couleurOption = document.createElement("option");
+            couleurOption.setAttribute("value", `${couleurs}`);
+            //Grace à la méthode forEach cette balise sera multiplier par le nombre de couleurs présentent dans data.colors.
+            
+            //Insérer la balise "option" dans la balise "select id=colors":
+            couleurProduit.appendChild(couleurOption);
+            
+            //Insérer les couleurs dans les balises "options":
+            couleurOption.innerHTML = `${couleurs}`;
+            
+            //Contrôle:
+            //console.log(couleurOption);    
         });
+
     }catch{(erreur) => console.log(erreur)};
 }).catch(erreur => console.log(erreur));
+
+//selection de l'id du bouton d'ajout au panier:
+let boutonProduct = document.getElementById("addToCart");
+
+//Recuperation des données selectionées par l'utilisateur + id du produit:
+boutonProduct.addEventListener("click", () => {
+    localStorage.clear();
+    let parametre = new URLSearchParams(document.location.search);
+    let idProduit = parametre.get("id");
+    let idH1 = document.getElementById("title");
+    let nomKanap = idH1.innerText;
+    let selectColor = couleurProduit.value; 
+    console.log(selectColor);
+    let selectQuantity = inputQuantity.value;
+    console.log(selectQuantity);
+
+    //Nouvelle objet:
+    kanap = {
+        id: idProduit,
+        nom: nomKanap,
+        couleur: selectColor,
+        quantité: selectQuantity
+    };
+    
+    console.log(kanap);
+
+    let stringKanap = JSON.stringify(kanap);
+    localStorage.setItem("produit", stringKanap);
+
+});
