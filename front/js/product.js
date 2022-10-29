@@ -59,7 +59,6 @@ let boutonProduct = document.getElementById("addToCart");
 
 //Recuperation des données selectionées par l'utilisateur + id du produit:
 boutonProduct.addEventListener("click", () => {
-    localStorage.clear();
     let parametre = new URLSearchParams(document.location.search);
     let idProduit = parametre.get("id");
     let idH1 = document.getElementById("title");
@@ -74,12 +73,32 @@ boutonProduct.addEventListener("click", () => {
         id: idProduit,
         nom: nomKanap,
         couleur: selectColor,
-        quantité: selectQuantity
+        quantite: selectQuantity
     };
     
     console.log(kanap);
+    
+    let kanapArray;
+    if(localStorage.getItem("produit") === null){
+        kanapArray = [];
+        kanapArray.push(kanap);
+    }
+    else{kanapArray = JSON.parse(localStorage.getItem("produit"))
+        let flag = 0;
+        kanapArray.forEach((item) =>{
+            if(item.id == kanap.id && item.couleur == kanap.couleur){
+                item.quantite = parseInt(item.quantite) + parseInt(kanap.quantite);
+                flag = 1;
+            }
+        });
+        
+        if (flag == 0){
+            kanapArray.push(kanap)
+        }
 
-    let stringKanap = JSON.stringify(kanap);
-    localStorage.setItem("produit", stringKanap);
+    };
 
+    localStorage.setItem("produit", JSON.stringify(kanapArray));
+    
+    console.log(kanapArray); 
 });
