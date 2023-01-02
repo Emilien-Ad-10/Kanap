@@ -63,42 +63,50 @@ boutonProduct.addEventListener("click", () => {
     let idProduit = parametre.get("id");
     let idH1 = document.getElementById("title");
     let nomKanap = idH1.innerText;
-    let selectColor = couleurProduit.value; 
-    console.log(selectColor);
+    let selectColor = couleurProduit.value;
     let selectQuantity = inputQuantity.value;
-    console.log(selectQuantity);
+    //console.log(selectColor);
+    if(selectColor === ""){
+        alert("veuillez sélectionner une couleur");
+    }else if(selectQuantity <= 0 || selectQuantity >100){
+        alert("veuillez insérer une valeur comprise entre 0 et 100");
+    }else{
+        console.log(selectQuantity);
 
-    //Nouvelle objet:
-    kanap = {
-        id: idProduit,
-        nom: nomKanap,
-        couleur: selectColor,
-        quantite: selectQuantity
-    };
-    
-    console.log(kanap);
-    
-    let kanapArray;
-    if(localStorage.getItem("produit") === null){
-        kanapArray = [];
-        kanapArray.push(kanap);
-    }
-    else{kanapArray = JSON.parse(localStorage.getItem("produit"))
-        let flag = 0;
-        kanapArray.forEach((item) =>{
-            if(item.id == kanap.id && item.couleur == kanap.couleur){
-                item.quantite = parseInt(item.quantite) + parseInt(kanap.quantite);
-                flag = 1;
-            }
-        });
+        //Nouvelle objet:
+        kanap = {
+            id: idProduit,
+            nom: nomKanap,
+            couleur: selectColor,
+            quantite: selectQuantity
+        };
         
-        if (flag == 0){
-            kanapArray.push(kanap)
+        console.log(kanap);
+        
+        let kanapArray;
+        if(localStorage.getItem("produit") === null){
+            kanapArray = [];
+            kanapArray.push(kanap);
         }
+        else{kanapArray = JSON.parse(localStorage.getItem("produit"))
+            let flag = 0;
+            kanapArray.forEach((item) =>{
+                if(item.id == kanap.id && item.couleur == kanap.couleur){
+                    //renvoie un entier.
+                    item.quantite = parseInt(item.quantite) + parseInt(kanap.quantite);
+                    flag = 1;
+                }
+            });
+            
+            if (flag == 0){
+                kanapArray.push(kanap)
+            }
 
-    };
+        };
 
-    localStorage.setItem("produit", JSON.stringify(kanapArray));
-    
-    console.log(kanapArray); 
-});
+        localStorage.setItem("produit", JSON.stringify(kanapArray));
+        
+        console.log(kanapArray);
+        window.location = "cart.html";
+    }; 
+}); 
